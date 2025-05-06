@@ -1,0 +1,27 @@
+{
+  "name": "stubsit",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "nodemon index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
+    "fastify": "^5.3.2",
+    "supabase": "^2.22.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "dotenv": "^16.5.0",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.8.3"
+  },
+  "volta": {
+    "node": "22.9.0"
+  }
+}
