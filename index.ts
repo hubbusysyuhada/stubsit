@@ -3,6 +3,7 @@ import supabaseClient from './supabase/client'
 
 import masterRoute from './routes/master'
 import proxyRoute from './routes/proxy'
+import env from './env'
 
 (async () => {
   const server = fastify()
@@ -16,7 +17,7 @@ import proxyRoute from './routes/proxy'
     return 'pong\n'
   })
   
-  server.listen({ port: 3000 }, (err, address) => {
+  server.listen({ port: +(env.PORT) }, (err, address) => {
     if (err) {
       console.error(err)
       process.exit(1)
