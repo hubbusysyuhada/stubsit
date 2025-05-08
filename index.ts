@@ -17,7 +17,7 @@ import env from './env'
     return 'pong\n'
   })
   
-  server.listen({ port: +(env.PORT) }, (err, address) => {
+  server.listen({ port: +(env.PORT), host: '0.0.0.0' }, (err, address) => {
     if (err) {
       console.error(err)
       process.exit(1)
