@@ -1,6 +1,6 @@
 import fastify from 'fastify'
 import supabaseClient from './supabase/client'
-
+import cors from '@fastify/cors'
 import masterRoute from './routes/master'
 import proxyRoute from './routes/proxy'
 import env from './env'
@@ -8,6 +8,9 @@ import env from './env'
 (async () => {
   const server = fastify()
   const supabase = supabaseClient()
+  server.register(cors, { origin: (_, cb) => {
+    return cb(null, true)
+  } })
   server.decorateRequest('supabase', {
     getter:() => supabase,
   })
