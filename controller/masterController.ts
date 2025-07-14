@@ -28,17 +28,18 @@ export default class MasterController {
 
   static async newEndpoint(request: FastifyRequest<{Body: { name: string; description?: string }}>, reply: FastifyReply) {
     if (!request.body || !request.body.name) return reply.code(400).send(new Error('Name is required.'))
+    const generatedSlug = slug()
     // @ts-ignore
-    const { data, error } = await request.supabase
+    const { error } = await request.supabase
       .from('endpoints')
       .insert([
         {
           name: request.body.name,
           description: request.body.description,
-          slug: slug()
+          slug: generatedSlug
         }
       ])
-    if (!error) return reply.code(201).send({ data })
+    if (!error) return reply.code(201).send({ data: generatedSlug })
     return reply.code(+(error.code)).send(new Error(error.details))
   }
 
@@ -91,6 +92,7 @@ export default class MasterController {
     const { method, response_code, is_error, error_message, response } = request.body
     const { data: endpoint } = await supabase.from('endpoints').select('id').eq('slug', request.params.endpoint).single()
     if (!endpoint) return reply.code(400).send(new Error('Incorrect slug.'))
+    const generatedSlug = slug()
     const { data, error } = await supabase
       .from('calls')
       .insert([
@@ -101,10 +103,10 @@ export default class MasterController {
           response_code,
           response,
           is_error,
-          slug: slug()
+          slug: generatedSlug
         }
       ])
-    if (!error) return reply.code(201).send({ data })
+    if (!error) return reply.code(201).send({ data: generatedSlug })
     return reply.send(new Error(error.message))
   }
 
