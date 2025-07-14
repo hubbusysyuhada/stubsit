@@ -14,7 +14,7 @@ export default class MasterController {
       const r: Record<string, string> = {}
       // @ts-ignore
       d.calls.forEach(c => {
-        r[c.method] = `/${d.slug}/${c.slug}`
+        r[c.method] = `/api/${d.slug}/${c.slug}`
       })
       // @ts-ignore
       d.url = r
