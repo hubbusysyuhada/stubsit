@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import slug from "../helper/slug";
-import { Database } from "../supabase/database.types";
+import { Database, Tables } from "../supabase/database.types";
 
 export default class MasterController {
 
@@ -8,7 +8,21 @@ export default class MasterController {
     // @ts-ignore
     const { data } = await request.supabase
       .from('endpoints')
-      .select('name, slug')
+      .select('name, slug, calls(slug, method)')
+    // @ts-ignore
+    if (data) data.forEach((d) => {
+      const r: Record<string, string> = {}
+      // @ts-ignore
+      d.calls.forEach(c => {
+        r[c.method] = `/${d.slug}/${c.slug}`
+      })
+      // @ts-ignore
+      d.url = r
+      // @ts-ignore
+      delete d.calls
+      // @ts-ignore
+      delete d.slug
+    })
     return reply.code(200).send({ data })
   }
 
