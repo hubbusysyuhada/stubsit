@@ -7,6 +7,7 @@ const routes: FastifyPluginCallback = (fastify) => {
   fastify.get('/:endpoint', MasterController.getEndpointBySlug)
   fastify.put('/:endpoint', MasterController.editEndpoint)
   fastify.delete('/:endpoint', MasterController.deleteEndpoint)
+  fastify.get('/:endpoint/:call', MasterController.getCallBySlug)
   fastify.put('/:endpoint/:call', MasterController.editCall)
 }
 

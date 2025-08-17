@@ -8,8 +8,9 @@ export default class MasterController {
     // @ts-ignore
     const { data } = await request.supabase
       .from('endpoints')
-      .select('name, slug, calls(slug, method, is_error, response_code)')
+      .select('name, slug, calls(slug, method)')
       .order('id', { ascending: false })
+      .order('id', { foreignTable: 'calls' })
     return reply.code(200).send({ data })
   }
 
@@ -88,9 +89,11 @@ export default class MasterController {
   static async getEndpointBySlug(request: FastifyRequest<{Params: { endpoint: string }}>, reply: FastifyReply) {
     // @ts-ignore
     const { data } = await request.supabase
-      .from('endpoints').select('*, calls(*, query_strings(*))')
+      .from('endpoints').select('*, calls(slug,method,is_error,response_code)')
       .eq('slug', request.params.endpoint)
+      .order('id', { foreignTable: 'calls' })
       .single()
+    if (!data) return reply.code(400).send(new Error('Incorrect slug.'))
     return reply.code(200).send({ data })
   }
 
@@ -168,5 +171,19 @@ export default class MasterController {
         .eq('endpoint_id', endpoint.id)
       if (!error) return reply.code(200).send({ data: 'delete success' })
       return reply.send(new Error(error.message))
+  }
+
+  static async getCallBySlug(request: FastifyRequest<{Params: { endpoint: string; call: string }}>, reply: FastifyReply) {
+    // @ts-ignore
+    const { data,error } = await request.supabase
+      .from('calls')
+      .select('method,slug,response_code,is_error,error_message,response,endpoints!inner(slug)')
+      .eq('slug', request.params.call)
+      .eq('endpoints.slug', request.params.endpoint)
+      .single()
+    console.log(error);
+    
+    if (data) return reply.code(200).send({ data })
+    return reply.code(400).send(new Error('Incorrect slug.'))
   }
 }
