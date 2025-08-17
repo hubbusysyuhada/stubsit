@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import slug from "../helper/slug";
-import { Database, Tables } from "../supabase/database.types";
+import { Database } from "../supabase/database.types";
 
 export default class MasterController {
 
@@ -17,7 +17,7 @@ export default class MasterController {
     if (!request.body || !request.body.name) return reply.code(400).send(new Error('Name is required.'))
     const generatedSlug = slug()
     // @ts-ignore
-    const { error } = await request.supabase
+    const { error, data } = await request.supabase
       .from('endpoints')
       .insert([
         {
@@ -26,6 +26,27 @@ export default class MasterController {
           slug: generatedSlug
         }
       ])
+      .select('id')
+      .single()
+      if (data) {
+        const methods: Database["public"]["Enums"]["http_method_type"][] = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+        const endpoint_id = data.id
+        for (const method of methods) {
+          // @ts-ignore
+          await request.supabase
+          .from('calls')
+          .insert([
+            {
+              endpoint_id,
+              method,
+              response_code: 200,
+              is_error: false,
+              slug: slug()
+            }
+          ])
+
+        }
+    }
     if (!error) return reply.code(201).send({ data: generatedSlug })
     return reply.code(+(error.code)).send(new Error(error.details))
   }
@@ -47,12 +68,21 @@ export default class MasterController {
 
   static async deleteEndpoint(request: FastifyRequest<{Params: { endpoint: string }}>, reply: FastifyReply) {
       // @ts-ignore
-      const { error } = await request.supabase
-        .from('endpoints')
-        .delete()
-        .eq('slug', request.params.endpoint)
-      if (!error) return reply.code(200).send({ data: 'delete success' })
-        return reply.send(new Error(error.message))
+      const {  data: endpoint } = await request.supabase.from('endpoints').select('id').eq('slug', request.params.endpoint).single()
+      if (endpoint) {
+        // @ts-ignore
+        await request.supabase
+          .from('calls')
+          .delete()
+          .eq('endpoint_id', endpoint.id)
+        // @ts-ignore
+        await request.supabase
+          .from('endpoints')
+          .delete()
+          .eq('id', endpoint.id)
+        return reply.code(200).send({ data: 'delete success' })
+      }
+      return reply.code(400).send(new Error('Something went wrong.'))
   }
 
   static async getEndpointBySlug(request: FastifyRequest<{Params: { endpoint: string }}>, reply: FastifyReply) {
