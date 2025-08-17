@@ -8,21 +8,8 @@ export default class MasterController {
     // @ts-ignore
     const { data } = await request.supabase
       .from('endpoints')
-      .select('name, slug, calls(slug, method)')
-    // @ts-ignore
-    if (data) data.forEach((d) => {
-      const r: Record<string, string> = {}
-      // @ts-ignore
-      d.calls.forEach(c => {
-        r[c.method] = `/api/${d.slug}/${c.slug}`
-      })
-      // @ts-ignore
-      d.url = r
-      // @ts-ignore
-      delete d.calls
-      // @ts-ignore
-      delete d.slug
-    })
+      .select('name, slug, calls(slug, method, is_error, response_code)')
+      .order('id', { ascending: false })
     return reply.code(200).send({ data })
   }
 
