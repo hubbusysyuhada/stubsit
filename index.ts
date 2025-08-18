@@ -8,9 +8,23 @@ import env from './env'
 (async () => {
   const server = fastify()
   const supabase = supabaseClient()
-  server.register(cors, { origin: (_, cb) => {
-    return cb(null, true)
-  } })
+  server.register(cors, {
+  origin: (origin, cb) => {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      env.DOMAIN,
+    ]
+    // Allow requests with no origin (e.g., mobile apps, curl, Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      cb(null, true)
+    } else {
+      cb(new Error("Not allowed by CORS"), false)
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+})
   server.decorateRequest('supabase', {
     getter:() => supabase,
   })
