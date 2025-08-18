@@ -19,7 +19,7 @@ export default class MasterController {
     const generatedSlug = slug()
     // @ts-ignore
     const { data: existing } = await request.supabase.from('endpoints').select('id').eq('name', request.body.name).single()
-    if (existing) return reply.code(400).send('This name is taken.')
+    if (existing) return reply.code(400).send(new Error('This name is taken.'))
     // @ts-ignore
     const { error, data } = await request.supabase
       .from('endpoints')
