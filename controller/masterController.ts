@@ -55,7 +55,10 @@ export default class MasterController {
     return reply.code(+(error.code)).send(new Error(error.details))
   }
 
-  static async editEndpoint(request: FastifyRequest<{Body: { name?: string; description?: string }; Params: { endpoint: string }}>, reply: FastifyReply) {
+  static async editEndpoint(request: FastifyRequest<{Body: { name: string; description: string }; Params: { endpoint: string }}>, reply: FastifyReply) {
+    // @ts-ignore
+    const { data: existing } = await request.supabase.from('endpoints').select('id').eq('name', request.body.name).neq('slug', request.params.endpoint).single()
+    if (existing) return reply.code(400).send(new Error('This name is taken.'))
     // @ts-ignore
     const { data, error } = await request.supabase
       .from('endpoints')
@@ -149,10 +152,10 @@ export default class MasterController {
     const { data, error } = await supabase
       .from('calls')
       .update({
-            error_message,
-            response_code,
-            response,
-            is_error,
+        error_message,
+        response_code,
+        response,
+        is_error,
       })
       .eq('slug', request.params.call)
       .eq('endpoints.slug', request.params.endpoint)
