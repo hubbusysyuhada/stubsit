@@ -181,14 +181,12 @@ export default class MasterController {
 
   static async getCallBySlug(request: FastifyRequest<{Params: { endpoint: string; call: string }}>, reply: FastifyReply) {
     // @ts-ignore
-    const { data,error } = await request.supabase
+    const { data, error } = await request.supabase
       .from('calls')
-      .select('method,slug,response_code,is_error,error_message,response,endpoints!inner(slug)')
+      .select('method,slug,response_code,is_error,error_message,response,endpoint:endpoints!inner(slug)')
       .eq('slug', request.params.call)
       .eq('endpoints.slug', request.params.endpoint)
       .single()
-    console.log(error);
-    
     if (data) return reply.code(200).send({ data })
     return reply.code(400).send(new Error('Incorrect slug.'))
   }
