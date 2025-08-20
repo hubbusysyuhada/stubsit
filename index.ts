@@ -32,7 +32,7 @@ import { readdirSync } from 'fs'
     getter:() => supabase,
   })
   server.register(fastifyStatic, {
-    root: path.resolve(__dirname, 'out'),
+    root: path.resolve(__dirname, '..', 'out'),
   })
   server.register(masterRoute, {prefix: 'master'})
   server.register(proxyRoute, {prefix: 'api'})
