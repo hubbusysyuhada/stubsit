@@ -6,6 +6,7 @@ import proxyRoute from './routes/proxy'
 import env from './env'
 import fastifyStatic from '@fastify/static'
 import path from 'path'
+import { readdirSync } from 'fs'
 
 (async () => {
   const server = fastify()
@@ -35,6 +36,12 @@ import path from 'path'
   })
   server.register(masterRoute, {prefix: 'master'})
   server.register(proxyRoute, {prefix: 'api'})
+  server.get('/debug-path', (request, reply) => {
+    const root = path.resolve(__dirname)
+    const directories = readdirSync(root)
+    const staticPath = path.resolve(__dirname, 'out');
+    reply.send({ root, directories, staticPath });
+  });
   server.get('/ping', async (request, reply) => {
     return 'pong\n'
   })
