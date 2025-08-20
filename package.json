@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "watch": "nodemon index.ts",
-    "start-production": "npm install && npm run build && node build/index.js"
+    "start-production": "npm install && npm run build && mv out build && node build/index.js"
   },
   "keywords": [],
   "author": "",
