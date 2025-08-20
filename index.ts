@@ -4,6 +4,8 @@ import cors from '@fastify/cors'
 import masterRoute from './routes/master'
 import proxyRoute from './routes/proxy'
 import env from './env'
+import fastifyStatic from '@fastify/static'
+import path from 'path'
 
 (async () => {
   const server = fastify()
@@ -27,6 +29,9 @@ import env from './env'
 })
   server.decorateRequest('supabase', {
     getter:() => supabase,
+  })
+  server.register(fastifyStatic, {
+    root: path.join(__dirname, 'out'),
   })
   server.register(masterRoute, {prefix: 'master'})
   server.register(proxyRoute, {prefix: 'api'})

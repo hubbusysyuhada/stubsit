@@ -1,0 +1,19 @@
+1:"$Sreact.fragment"
+2:I[3764,["776","static/chunks/0db7ecf4-4b4fea8f399afa50.js","968","static/chunks/e6d887d1-6b2d5d08c8ddd2c3.js","153","static/chunks/75568366-7acf0592141e4fb7.js","380","static/chunks/7f77c2de-45903ffca5ba0f56.js","108","static/chunks/1ef19efb-66b03582f112aea2.js","627","static/chunks/627-61ed2336b7adaa4c.js","769","static/chunks/769-041e2543cc8700fd.js","177","static/chunks/app/layout-e6dc87e4ea04ac91.js"],"default"]
+3:I[3186,[],""]
+4:I[9424,[],""]
+5:I[778,[],"OutletBoundary"]
+7:I[8074,[],"AsyncMetadataOutlet"]
+9:I[778,[],"ViewportBoundary"]
+b:I[778,[],"MetadataBoundary"]
+c:"$Sreact.suspense"
+e:I[794,[],""]
+:HL["/_next/static/media/63b7f7cf762c1c1b-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/css/4775b9b532aa337e.css","style"]
+:HL["/_next/static/css/6cff63f2cea4bda4.css","style"]
+0:{"P":null,"b":"-cj3uSkjLzBvBPq4YqSzV","p":"","c":["",""],"i":false,"f":[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/4775b9b532aa337e.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","link","1",{"rel":"stylesheet","href":"/_next/static/css/6cff63f2cea4bda4.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"en","suppressHydrationWarning":true,"children":["$","body",null,{"className":"flex min-h-screen","children":["$","$L2",null,{"children":["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"className":"h-full flex flex-col align-center justify-center","children":["$","div",null,{"className":"flex justify-center","children":[["$","p",null,{"className":"mr-5 pr-[23px] text-[24px] font-medium align-top leading-[49px] inline border-r-[1px] border-[#FFFFFF4d]","children":"404"}],["$","p",null,{"className":"text-[14px] font-normal leading-[49px] m-0 inline","children":"This page could not be found."}]]}]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]}]}]]}],{"children":["__PAGE__",["$","$1","c",{"children":["$undefined",null,["$","$L5",null,{"children":["$L6",["$","$L7",null,{"promise":"$@8"}]]}]]}],{},null,false]},null,false],["$","$1","h",{"children":[null,[["$","$L9",null,{"children":"$La"}],["$","meta",null,{"name":"next-size-adjust","content":""}]],["$","$Lb",null,{"children":["$","div",null,{"hidden":true,"children":["$","$c",null,{"fallback":null,"children":"$Ld"}]}]}]]}],false]],"m":"$undefined","G":["$e",[]],"s":false,"S":true}
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+6:null
+f:I[4418,[],"IconMark"]
+8:{"metadata":[["$","title","0",{"children":"Stubsit"}],["$","meta","1",{"name":"description","content":"Stub Your API"}],["$","link","2",{"rel":"icon","href":"/favicon.ico","type":"image/x-icon","sizes":"37x59"}],["$","$Lf","3",{}]],"error":null,"digest":"$undefined"}
+d:"$8:metadata"
