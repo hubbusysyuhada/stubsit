@@ -36,12 +36,6 @@ import { readdirSync } from 'fs'
   })
   server.register(masterRoute, {prefix: 'master'})
   server.register(proxyRoute, {prefix: 'api'})
-  server.get('/debug-path', (request, reply) => {
-    const root = path.resolve(__dirname, '..')
-    const directories = readdirSync(root)
-    const staticPath = path.resolve(__dirname, 'out');
-    reply.send({ root, directories, staticPath });
-  });
   server.get('/ping', async (request, reply) => {
     return 'pong\n'
   })
