@@ -31,7 +31,7 @@ import path from 'path'
     getter:() => supabase,
   })
   server.register(fastifyStatic, {
-    root: path.join(__dirname, 'out'),
+    root: path.resolve(__dirname, 'out'),
   })
   server.register(masterRoute, {prefix: 'master'})
   server.register(proxyRoute, {prefix: 'api'})
