@@ -4,9 +4,7 @@ import cors from '@fastify/cors'
 import masterRoute from './routes/master'
 import proxyRoute from './routes/proxy'
 import env from './env'
-import fastifyStatic from '@fastify/static'
 import path from 'path'
-import { readdirSync } from 'fs'
 
 (async () => {
   const server = fastify()
@@ -15,7 +13,7 @@ import { readdirSync } from 'fs'
   origin: (origin, cb) => {
     const allowedOrigins = [
       'http://localhost:3000',
-      env.DOMAIN,
+      env.DASHBOARD_DOMAIN,
     ]
     // Allow requests with no origin (e.g., mobile apps, curl, Postman)
     if (!origin || allowedOrigins.includes(origin)) {
@@ -30,9 +28,6 @@ import { readdirSync } from 'fs'
 })
   server.decorateRequest('supabase', {
     getter:() => supabase,
-  })
-  server.register(fastifyStatic, {
-    root: path.resolve(__dirname, 'out'),
   })
   server.register(masterRoute, {prefix: 'master'})
   server.register(proxyRoute, {prefix: 'api'})

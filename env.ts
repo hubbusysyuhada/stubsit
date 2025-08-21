@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 
 export default {
-  DOMAIN: process.env.DOMAIN || "",
+  DASHBOARD_DOMAIN: process.env.DASHBOARD_DOMAIN || "",
   NODE_ENV: process.env.NODE_ENV || "development",
   SUPABASE_URL: process.env.SUPABASE_URL || "",
   SUPABASE_TOKEN: process.env.SUPABASE_TOKEN || "",
