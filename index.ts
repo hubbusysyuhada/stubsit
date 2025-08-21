@@ -4,7 +4,6 @@ import cors from '@fastify/cors'
 import masterRoute from './routes/master'
 import proxyRoute from './routes/proxy'
 import env from './env'
-import path from 'path'
 
 (async () => {
   const server = fastify()
