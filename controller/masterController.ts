@@ -4,6 +4,80 @@ import { Database } from "../supabase/database.types";
 
 export default class MasterController {
 
+  static async getAllGroups(request: FastifyRequest, reply: FastifyReply) {
+    // @ts-ignore
+    const { data } = await request.supabase
+      .from('groups')
+      .select('name, description, slug, endpoints(name, slug, calls(id, slug, method))')
+      .order('id', { ascending: false })
+      .order('id', { ascending: false, foreignTable: 'endpoints' })
+    return reply.code(200).send({ data })
+  }
+
+  static async getGroupBySlug(request: FastifyRequest<{Params: { group: string }}>, reply: FastifyReply) {
+    // @ts-ignore
+    const { data } = await request.supabase
+      .from('groups')
+      .select('name, description, slug, endpoints(name, description, slug)')
+      .eq('slug', request.params.group)
+      .order('id', { ascending: false, foreignTable: 'endpoints' })
+      .single()
+    return reply.code(200).send({ data })
+  }
+
+  static async newGroup(request: FastifyRequest<{Body: { name: string; description?: string; }}>, reply: FastifyReply) {
+    // @ts-ignore
+    const { data: group } = await request.supabase.from('groups').select('id').eq('name', request.body.name).single()
+    if (group) return reply.code(400).send(new Error('This name is taken.'))
+    const generatedSlug = slug()
+    // @ts-ignore
+    await request.supabase
+      .from('groups')
+      .insert([
+        {
+          name: request.body.name,
+          description: request.body.description,
+          slug: generatedSlug
+        }
+      ])
+    return reply.code(200).send({ data: generatedSlug })
+  }
+
+  static async editGroup(request: FastifyRequest<{Body: { name: string; description?: string }; Params: { group: string }}>, reply: FastifyReply) {
+    // @ts-ignore
+    const { data: group } = await request.supabase.from('groups').select('id').eq('slug', request.params.group).single()
+    if (!group) return reply.code(400).send(new Error('Group not found.'))
+    // @ts-ignore
+    const { data: existing } = await request.supabase.from('groups').select('id').eq('name', request.body.name).neq('slug', request.params.group).single()
+    if (existing) return reply.code(400).send(new Error('This name is taken.'))
+    // @ts-ignore
+    const { data } = await request.supabase
+      .from('groups')
+      .update({
+        name: request.body.name,
+        description: request.body.description
+      })
+      .eq('slug', request.params.group)
+      .select('name, slug, endpoints(name, slug, calls(id, slug, method))')
+      .single()
+    return reply.code(200).send({ data })
+  }
+
+  static async deleteGroup(request: FastifyRequest<{Params: { group: string }}>, reply: FastifyReply) {
+      // @ts-ignore
+      const {  data: group } = await request.supabase.from('groups').select('id, endpoints(id)').eq('slug', request.params.group).single()
+      if (group) {
+        if (group.endpoints.length) return reply.code(400).send(new Error('Group still has endpoints.'))
+        // @ts-ignore
+        await request.supabase
+          .from('groups')
+          .delete()
+          .eq('id', group.id)
+        return reply.code(200).send({ data: 'delete success' })
+      }
+      return reply.code(400).send(new Error('Something went wrong.'))
+  }
+
   static async getAllEndpoints(request: FastifyRequest, reply: FastifyReply) {
     // @ts-ignore
     const { data } = await request.supabase
@@ -14,8 +88,11 @@ export default class MasterController {
     return reply.code(200).send({ data })
   }
 
-  static async newEndpoint(request: FastifyRequest<{Body: { name: string; description?: string }}>, reply: FastifyReply) {
+  static async newEndpoint(request: FastifyRequest<{Body: { name: string; description?: string; }; Params: { group: string }}>, reply: FastifyReply) {
     if (!request.body || !request.body.name) return reply.code(400).send(new Error('Name is required.'))
+    // @ts-ignore
+    const { data: group } = await request.supabase.from('groups').select('id').eq('slug', request.params.group).single()
+    if (!group) return reply.code(400).send(new Error('Group not found.'))
     const generatedSlug = slug()
     // @ts-ignore
     const { data: existing } = await request.supabase.from('endpoints').select('id').eq('name', request.body.name).single()
@@ -27,7 +104,8 @@ export default class MasterController {
         {
           name: request.body.name,
           description: request.body.description,
-          slug: generatedSlug
+          slug: generatedSlug,
+          group_id: group.id
         }
       ])
       .select('id')
@@ -55,7 +133,10 @@ export default class MasterController {
     return reply.code(+(error.code)).send(new Error(error.details))
   }
 
-  static async editEndpoint(request: FastifyRequest<{Body: { name: string; description: string }; Params: { endpoint: string }}>, reply: FastifyReply) {
+  static async editEndpoint(request: FastifyRequest<{Body: { name: string; description: string; group: string; }; Params: { endpoint: string; group: string }}>, reply: FastifyReply) {
+    // @ts-ignore
+    const { data: group } = await request.supabase.from('groups').select('id').eq('slug', request.body.group).single()
+    if (!group) return reply.code(400).send(new Error('Group not found.'))
     // @ts-ignore
     const { data: existing } = await request.supabase.from('endpoints').select('id').eq('name', request.body.name).neq('slug', request.params.endpoint).single()
     if (existing) return reply.code(400).send(new Error('This name is taken.'))
@@ -64,16 +145,17 @@ export default class MasterController {
       .from('endpoints')
       .update({
         name: request.body.name,
-        description: request.body.description
+        description: request.body.description,
+        group_id: group.id
       })
       .eq('slug', request.params.endpoint)
-      .select('*, calls(*, query_strings(*))')
+      .select('id')
       .single()
     if (!error) return reply.code(200).send({ data })
       return reply.send(new Error(error.message))
   }
 
-  static async deleteEndpoint(request: FastifyRequest<{Params: { endpoint: string }}>, reply: FastifyReply) {
+  static async deleteEndpoint(request: FastifyRequest<{Params: { endpoint: string; group: string }}>, reply: FastifyReply) {
       // @ts-ignore
       const {  data: endpoint } = await request.supabase.from('endpoints').select('id').eq('slug', request.params.endpoint).single()
       if (endpoint) {
@@ -92,7 +174,7 @@ export default class MasterController {
       return reply.code(400).send(new Error('Something went wrong.'))
   }
 
-  static async getEndpointBySlug(request: FastifyRequest<{Params: { endpoint: string }}>, reply: FastifyReply) {
+  static async getEndpointBySlug(request: FastifyRequest<{Params: { endpoint: string; group: string }}>, reply: FastifyReply) {
     // @ts-ignore
     const { data } = await request.supabase
       .from('endpoints').select('*, calls(slug,method,is_error,response_code)')
@@ -137,7 +219,7 @@ export default class MasterController {
   }
 
   static async editCall(request: FastifyRequest<{
-    Params: { endpoint: string; call: string };
+    Params: { endpoint: string; call: string; group: string };
     Body: {
       method: Database["public"]["Enums"]["http_method_type"];
       response_code: number;
@@ -179,7 +261,7 @@ export default class MasterController {
       return reply.send(new Error(error.message))
   }
 
-  static async getCallBySlug(request: FastifyRequest<{Params: { endpoint: string; call: string }}>, reply: FastifyReply) {
+  static async getCallBySlug(request: FastifyRequest<{Params: { endpoint: string; call: string; group: string }}>, reply: FastifyReply) {
     // @ts-ignore
     const { data, error } = await request.supabase
       .from('calls')
