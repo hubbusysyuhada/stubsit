@@ -31,6 +31,8 @@ import env from './env'
   server.register(masterRoute, {prefix: 'master'})
   server.register(proxyRoute, {prefix: 'api'})
   server.get('/ping', async (request, reply) => {
+    // @ts-ignore
+    await request.supabase.from('groups').select('id').limit(1)
     return 'pong\n'
   })
   
