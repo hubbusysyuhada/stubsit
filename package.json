@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "nodemon",
-    "start-production": "npm install && npm run build && node build/index.js"
+    "start-production": "npm install && npm run build && node build/index.js",
+    "gen-supabase-type": "dotenv -- sh -c 'supabase gen types typescript --project-id $SUPABASE_ID > ./supabase/database.types.ts'"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@types/node": "^22.15.3",
     "dotenv": "^16.5.0",
+    "dotenv-cli": "^10.0.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",

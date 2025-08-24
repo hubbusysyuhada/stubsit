@@ -123,7 +123,8 @@ export default class MasterController {
     const generatedSlug = slug();
     const { data: existing } = await request.supabase
       .from('endpoints')
-      .select('id')
+      .select('id, groups!inner(slug)')
+      .eq('groups.slug', request.params.group)
       .eq('name', request.body.name)
       .single();
     if (existing) return reply.code(400).send(new Error('This name is taken.'));
@@ -179,7 +180,8 @@ export default class MasterController {
     if (!group) return reply.code(400).send(new Error('Group not found.'));
     const { data: existing } = await request.supabase
       .from('endpoints')
-      .select('id')
+      .select('id, groups!inner(slug)')
+      .eq('groups.slug', request.body.group)
       .eq('name', request.body.name)
       .neq('slug', request.params.endpoint)
       .single();
