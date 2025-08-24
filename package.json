@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "watch": "nodemon index.ts",
+    "dev": "nodemon",
     "start-production": "npm install && npm run build && node build/index.js"
   },
   "keywords": [],
@@ -22,7 +22,9 @@
     "@types/node": "^22.15.3",
     "dotenv": "^16.5.0",
     "nodemon": "^3.1.10",
-    "typescript": "^5.8.3"
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   },
   "volta": {
     "node": "22.9.0"
